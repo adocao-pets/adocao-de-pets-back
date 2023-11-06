@@ -6,7 +6,6 @@ export class Pet {
     type: string; //CAT | DOG
     race: string;
     description: string;
-    isActive: boolean = true;
     createdAt: Date = new Date();
     updatedAt: Date = new Date();
     userId: number;
@@ -20,7 +19,6 @@ export class Pet {
 // type          String
 // race          String
 // description   String
-// isActive      Boolean
 // createdAt     DateTime @default(now())
 // updatedAt     DateTime @updatedAt @default(now())
 // user          user     @relation(fields: [userId], references: [id])

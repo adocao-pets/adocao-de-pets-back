@@ -1,5 +1,11 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNumber, IsOptional, IsPositive, IsString } from "class-validator";
+import { IsNumber, IsOptional, IsPositive, IsString, IsEnum } from "class-validator";
+
+
+export enum PetType {
+    CAT = 'GATO',
+    DOG = 'CACHORRO'
+}
 
 export class CreatePetDto {
     constructor(image: string, name: string, age: number, type: PetType, race: string, description: string, userId: number){
@@ -26,6 +32,7 @@ export class CreatePetDto {
 
     @ApiProperty({ enum: ['CACHORRO', 'GATO']})
     @IsString({ message: 'type is required, only CACHORRO or GATO' })
+    @IsEnum(PetType)
     readonly type: PetType; //CAT | DOG
 
     @ApiProperty()
@@ -41,8 +48,4 @@ export class CreatePetDto {
     // readonly updatedAt: Date = new Date();
     @IsNumber()
     readonly userId: number;
-}
-enum PetType {
-    CAT = 'CAT',
-    DOG = 'DOG'
 }

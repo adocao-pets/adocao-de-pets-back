@@ -28,7 +28,6 @@ model pet {
   type          String
   race          String?
   description   String
-  isActive      Boolean  @default(true)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt @default(now())
   userId        Int

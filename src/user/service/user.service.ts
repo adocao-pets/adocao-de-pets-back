@@ -3,6 +3,7 @@ import { PrismaService } from 'src/infra/db/prisma.service';
 import { CreatePetDto } from 'src/pet/dto/pet.dto';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { User } from '../entity/user.entity';
+import { ResponsePetDto } from 'src/pet/dto/pet.response.dto';
 
 @Injectable()
 export class UserService {
@@ -34,6 +35,47 @@ export class UserService {
       userId: pet.userId
     } });
     return petCreated;
+  }
+
+  async removePet(petId: number) {
+    try {
+      const petExists = await this.repository.pet.findUnique({
+        where: {
+          id: petId
+        }
+      })
+      
+      if (!petExists) throw new BadRequestException('Pet not found');
+
+      return  await this.repository.pet.delete({
+            where: {
+                id: petId
+            }
+        })
+    } catch (error) {
+        throw new BadRequestException(error.message)
+    }
+  }
+
+  async getAllPets(): Promise<ResponsePetDto[]> {
+    return await this.repository.pet.findMany(
+      {
+        include: {
+          user: true
+        }
+      }
+    );
+  }
+
+  async getPet(petId: number): Promise<ResponsePetDto> {
+    const pet = await this.repository.pet.findUnique({
+      where: {
+        id: petId
+      }
+    });
+
+    if (!pet) throw new BadRequestException('Pet not found');
+    return pet;
   }
   
 }
