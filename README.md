@@ -1,3 +1,37 @@
+Table user {
+  id serial [not null, primary key]
+  email text [not null, unique]
+  name text [not null]
+  password text [not null]
+  createdAt timestamp(3) [not null, default: `CURRENT_TIMESTAMP`]
+  updatedAt timestamp(3) [not null, default: `CURRENT_TIMESTAMP`]
+  userId integer [not null, ref: > user.id]
+}
+
+Table pet {
+  id serial [not null, primary key]
+  image text [not null]
+  name text [not null]
+  age integer [not null]
+  type text [not null]
+  race text [not null]
+  description text [not null]
+  createdAt timestamp(3) [not null, default: `CURRENT_TIMESTAMP`]
+  updatedAt timestamp(3) [not null, default: `CURRENT_TIMESTAMP`]
+  userId integer [not null, ref: > user.id]
+  announcementId integer [ref: > announcement.id]
+}
+
+Table announcement {
+  id serial [not null, primary key]
+  description text [not null]
+  createdAt timestamp(3) [not null, default: `CURRENT_TIMESTAMP`]
+  updatedAt timestamp(3) [not null, default: `CURRENT_TIMESTAMP`]
+  userId integer [not null, ref: > user.id]
+  petId integer [not null, ref: > pet.id]
+}
+
+
 <p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
 </p>
