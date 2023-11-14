@@ -3,6 +3,7 @@ import { PrismaService } from 'src/infra/db/prisma.service';
 import { CreatePetDto } from 'src/pet/dto/pet.dto';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { User } from '../entity/user.entity';
+import { Pet } from 'src/pet/entity/pet.entity';
 import { ResponsePetDto } from 'src/pet/dto/pet.response.dto';
 
 @Injectable()
@@ -21,7 +22,7 @@ export class UserService {
     return userCreated;
   }
 
-  async registerPet(pet: CreatePetDto): Promise<any> {
+  async registerPet(pet: CreatePetDto): Promise<Pet> {
     const userExists = await this.repository.user.findUnique({
       where: {
         id: pet.userId
@@ -37,7 +38,7 @@ export class UserService {
     return petCreated;
   }
 
-  async removePet(petId: number) {
+  async removePet(petId: number): Promise<ResponsePetDto> {
     try {
       const petExists = await this.repository.pet.findUnique({
         where: {

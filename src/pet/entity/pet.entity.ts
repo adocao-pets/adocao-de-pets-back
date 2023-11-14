@@ -1,13 +1,34 @@
+import { ApiProperty } from "@nestjs/swagger";
+
 export class Pet {
+    @ApiProperty()
     id: number;
+
+    @ApiProperty()
     image: string;
+
+    @ApiProperty()
     name: string;
+
+    @ApiProperty()
     age: number;
-    type: string; //CAT | DOG
+
+    @ApiProperty()
+    type: string;
+
+    @ApiProperty()
     race: string;
+
+    @ApiProperty()
     description: string;
+
+    @ApiProperty()
     createdAt: Date = new Date();
+
+    @ApiProperty()
     updatedAt: Date = new Date();
+
+    @ApiProperty()
     userId: number;
 }
 
@@ -21,5 +42,5 @@ export class Pet {
 // description   String
 // createdAt     DateTime @default(now())
 // updatedAt     DateTime @updatedAt @default(now())
-// user          user     @relation(fields: [userId], references: [id])
+// user          User     @relation(fields: [userId], references: [id])
 // userId        Int

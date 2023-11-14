@@ -1,4 +1,5 @@
 import { PetType } from "./pet.dto";
+import { ApiProperty } from "@nestjs/swagger";
 
 export class ResponsePetDto {
     constructor(id: number, image: string, name: string, age: number, type: string, race: string, description: string, createdAt: Date, updatedAt: Date, userId: number){
@@ -14,20 +15,33 @@ export class ResponsePetDto {
         this.userId = userId;
     }
 
+    @ApiProperty()
     readonly id: number;
 
+    @ApiProperty()
     readonly image?: string;
 
+    @ApiProperty()
     readonly name: string;
 
+    @ApiProperty()
     readonly age: number;
 
+    @ApiProperty()
     readonly type: string; //CAT | DOG
 
+    @ApiProperty()
     readonly race: string;
 
+    @ApiProperty()
     readonly description: string;
+    
+    @ApiProperty()
     readonly createdAt: Date;
+    
+    @ApiProperty()
     readonly updatedAt: Date;
+    
+    @ApiProperty()
     readonly userId: number;
 }
