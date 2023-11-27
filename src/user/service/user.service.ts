@@ -38,10 +38,10 @@ export class UserService {
       ...pet,
       userId: pet.userId
     } });
-    return petCreated;
+    return petCreated as Pet;
   }
 
-  async removePet(petId: number): Promise<ResponsePetDto> {
+  async removePet(petId: number) {
     try {
       const petExists = await this.repository.pet.findUnique({
         where: {
@@ -51,7 +51,7 @@ export class UserService {
       
       if (!petExists) throw new BadRequestException('Pet not found');
 
-      return  await this.repository.pet.delete({
+      await this.repository.pet.delete({
             where: {
                 id: petId
             }
@@ -61,18 +61,33 @@ export class UserService {
     }
   }
 
-  async getPetsPaginated(perPage: number, page: number): Promise<PaginationDto<ResponsePetDto>> {
+  async getPets(perPage: number, page: number, raceParams: string, genderParams: string, sizeParams: string, typeParams: string): Promise<PaginationDto<ResponsePetDto>> {
     const paginate = createPaginator({perPage: perPage});
 
+    const where = [
+      { race: {contains: raceParams} },
+      { gender: {contains: genderParams} },
+      { size: {contains: sizeParams.toUpperCase()} },
+      { type: {contains: typeParams.toUpperCase()} },
+    ]
+
     return await paginate<Pet, Prisma.petFindManyArgs>(
-      this.repository.pet, {},
+      this.repository.pet, 
+      {
+        where: { AND: [
+          where[0] ? where[0] : {},
+          where[1] ? where[1] : {},
+          where[2] ? where[2] : {},
+          where[3] ? where[3] : {},
+        ]},
+      },
       {
         page: page,
       }
     )
   }
 
-  async getPet(petId: number): Promise<ResponsePetDto> {
+  async getPet(petId: number): Promise<Pet> {
     const pet = await this.repository.pet.findUnique({
       where: {
         id: petId
@@ -80,7 +95,7 @@ export class UserService {
     });
 
     if (!pet) throw new BadRequestException('Pet not found');
-    return pet;
+    return pet as Pet;
   }
   
 }

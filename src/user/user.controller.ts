@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, Param, Post, Query } from '@nestjs/commo
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserService } from './service/user.service';
 import { CreatePetDto } from 'src/pet/dto/pet.dto';
-import { ApiBody, ApiOperation, ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiCreatedResponse, ApiOkResponse, ApiQuery } from '@nestjs/swagger';
 import { User } from 'src/user/entity/user.entity';
 import { Pet } from 'src/pet/entity/pet.entity';
 import { ResponsePetDto } from 'src/pet/dto/pet.response.dto';
@@ -52,8 +52,20 @@ export class UserController {
     isArray: true
   })
   @Get('/pet')
-  getAllPets(@Query('page') page: number, @Query('perPage') perPage: number) {
-    return this.userService.getPetsPaginated(perPage ?? 10, page ?? 1);
+  @ApiQuery({ name: 'page', required: false })
+  @ApiQuery({ name: 'perPage', required: false })
+  @ApiQuery({ name: 'race', required: false })
+  @ApiQuery({ name: 'gender', required: false })
+  @ApiQuery({ name: 'size', required: false })
+  @ApiQuery({ name: 'type', required: false })
+  getAllPets(
+    @Query('page') page?: number,
+    @Query('perPage') perPage?: number,
+    @Query('race') race?: string,
+    @Query('gender') gender?: string,
+    @Query('size') size?: string,
+    @Query('type') type?: string,) {
+    return this.userService.getPets(perPage ?? 10, page ?? 1, race, gender, size, type);
   }
 
   @ApiOperation({ summary: 'Get pet' })
