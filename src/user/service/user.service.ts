@@ -5,6 +5,9 @@ import { CreateUserDto } from '../dto/create-user.dto';
 import { User } from '../entity/user.entity';
 import { Pet } from 'src/pet/entity/pet.entity';
 import { ResponsePetDto } from 'src/pet/dto/pet.response.dto';
+import { PaginationDto } from 'src/infra/db/pagination.dto';
+import { createPaginator } from 'prisma-pagination';
+import { Prisma, pet } from '@prisma/client';
 
 @Injectable()
 export class UserService {
@@ -58,14 +61,15 @@ export class UserService {
     }
   }
 
-  async getAllPets(): Promise<ResponsePetDto[]> {
-    return await this.repository.pet.findMany(
+  async getPetsPaginated(perPage: number, page: number): Promise<PaginationDto<ResponsePetDto>> {
+    const paginate = createPaginator({perPage: perPage});
+
+    return await paginate<Pet, Prisma.petFindManyArgs>(
+      this.repository.pet, {},
       {
-        include: {
-          user: true
-        }
+        page: page,
       }
-    );
+    )
   }
 
   async getPet(petId: number): Promise<ResponsePetDto> {
