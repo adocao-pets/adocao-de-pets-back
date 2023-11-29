@@ -28,7 +28,7 @@ export class ResponsePetDto {
     readonly age: number;
 
     @ApiProperty()
-    readonly type: string; //CAT | DOG
+    readonly type: string;
 
     @ApiProperty()
     readonly race: string;
