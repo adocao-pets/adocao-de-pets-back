@@ -22,6 +22,27 @@ export class UserService {
     return userCreated;
   }
 
+  async update(userId: number, user: CreateUserDto): Promise<User> {
+    try {
+      const userExists = await this.repository.user.findUnique({
+        where: {
+          id: userId
+        }
+      })
+      
+      if (!userExists) throw new BadRequestException('User not found');
+
+      return  await this.repository.user.update({
+            data: user,
+            where: {
+                id: userId
+            }
+        })
+    } catch (error) {
+        throw new BadRequestException(error.message)
+    }
+  }
+
   async registerPet(pet: CreatePetDto): Promise<Pet> {
     const userExists = await this.repository.user.findUnique({
       where: {
@@ -36,6 +57,27 @@ export class UserService {
       userId: pet.userId
     } });
     return petCreated;
+  }
+
+  async updatePet(petId: number, pet: CreatePetDto): Promise<Pet> {
+    try {
+      const petExists = await this.repository.pet.findUnique({
+        where: {
+          id: petId
+        }
+      })
+      
+      if (!petExists) throw new BadRequestException('Pet not found');
+
+      return  await this.repository.pet.update({
+            data: pet,
+            where: {
+                id: petId
+            }
+        })
+    } catch (error) {
+        throw new BadRequestException(error.message)
+    }
   }
 
   async removePet(petId: number): Promise<ResponsePetDto> {

@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Patch } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserService } from './service/user.service';
 import { CreatePetDto } from 'src/pet/dto/pet.dto';
@@ -22,6 +22,17 @@ export class UserController {
     return this.userService.create(createUserDto);
   }
 
+  @ApiOperation({ summary: 'Update user' })
+  @ApiBody({ type: CreateUserDto })
+  @ApiOkResponse({
+    description: 'User updated successfully',
+    type: User
+  })
+  @Patch('/update/:id')
+  update(@Param('id') id: string, @Body() updateUserDto: CreateUserDto) {
+    return this.userService.update(+id, updateUserDto);
+  }
+
   @ApiOperation({ summary: 'Create pet' })
   @ApiBody({ type: CreatePetDto })
   @ApiCreatedResponse({
@@ -31,6 +42,17 @@ export class UserController {
   @Post('/pet/register')
   registerPet(@Body() createPetDto: CreatePetDto) {
     return this.userService.registerPet(createPetDto);
+  }
+
+  @ApiOperation({ summary: 'Update pet' })
+  @ApiBody({ type: CreatePetDto })
+  @ApiOkResponse({
+    description: 'Pet updated successfully',
+    type: Pet
+  })
+  @Patch('/pet/update/:id')
+  updatePet(@Param('id') id: string, @Body() updatePetDto: CreatePetDto) {
+    return this.userService.updatePet(+id, updatePetDto);
   }
 
   @ApiOperation({ summary: 'Delete pet' })
@@ -66,6 +88,5 @@ export class UserController {
   getPet(@Param('id') id: string) {
     return this.userService.getPet(+id);
   }
-
 
 }
