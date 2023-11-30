@@ -1,4 +1,3 @@
-import { PetType } from "./pet.dto";
 import { ApiProperty } from "@nestjs/swagger";
 
 export class ResponsePetDto {
@@ -36,7 +35,7 @@ export class ResponsePetDto {
     readonly age: number;
 
     @ApiProperty()
-    readonly type: string; //CAT | DOG
+    readonly type: string;
 
     @ApiProperty()
     readonly race: string;

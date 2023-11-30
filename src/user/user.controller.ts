@@ -4,12 +4,12 @@ import {
   Delete,
   Get,
   Param,
+  Patch,
   Post,
   Query,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserService } from './service/user.service';
-import { CreatePetDto } from 'src/pet/dto/pet.dto';
 import {
   ApiBody,
   ApiOperation,
@@ -17,11 +17,13 @@ import {
   ApiOkResponse,
   ApiQuery,
 } from '@nestjs/swagger';
+
 import { User } from 'src/user/entity/user.entity';
 import { Pet } from 'src/pet/entity/pet.entity';
 import { ResponsePetDto } from 'src/pet/dto/pet.response.dto';
 import { PaginationDto } from 'src/infra/db/pagination.dto';
 import { LoginUserDto } from './dto/login-user.dto';
+import { CreatePetDto } from 'src/pet/dto/create-pet.dto';
 
 @Controller('api/v1/user')
 export class UserController {
@@ -54,6 +56,17 @@ export class UserController {
     return this.userService.login(loginUserDto);
   }
 
+  @ApiOperation({ summary: 'Update user' })
+  @ApiBody({ type: CreateUserDto })
+  @ApiOkResponse({
+    description: 'User updated successfully',
+    type: User,
+  })
+  @Patch('/update/:id')
+  update(@Param('id') id: string, @Body() updateUserDto: CreateUserDto) {
+    return this.userService.update(+id, updateUserDto);
+  }
+
   @ApiOperation({ summary: 'Create pet' })
   @ApiBody({ type: CreatePetDto })
   @ApiCreatedResponse({
@@ -63,6 +76,17 @@ export class UserController {
   @Post('/pet/register')
   registerPet(@Body() createPetDto: CreatePetDto) {
     return this.userService.registerPet(createPetDto);
+  }
+
+  @ApiOperation({ summary: 'Update pet' })
+  @ApiBody({ type: CreatePetDto })
+  @ApiOkResponse({
+    description: 'Pet updated successfully',
+    type: Pet,
+  })
+  @Patch('/pet/update/:id')
+  updatePet(@Param('id') id: string, @Body() updatePetDto: CreatePetDto) {
+    return this.userService.updatePet(+id, updatePetDto);
   }
 
   @ApiOperation({ summary: 'Delete pet' })
