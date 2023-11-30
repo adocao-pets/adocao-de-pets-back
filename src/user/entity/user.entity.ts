@@ -23,13 +23,3 @@ export class User {
     @ApiProperty()
     Pets?: Pet[];
 }
-
-
-// id            Int        @id @default(autoincrement())
-// name          String
-// email         String
-// password      String
-// createdAt     DateTime   @default(now())
-// updatedAt     DateTime   @updatedAt @default(now())
-// Pets          Pet[]        @relation(fields: [petId], references: [id])
-// petId         Int

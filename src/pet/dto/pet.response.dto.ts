@@ -1,4 +1,3 @@
-import { PetType } from "./pet.dto";
 import { ApiProperty } from "@nestjs/swagger";
 
 export class ResponsePetDto {

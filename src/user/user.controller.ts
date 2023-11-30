@@ -1,7 +1,7 @@
-import { Body, Controller, Delete, Get, Param, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Query, Patch } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserService } from './service/user.service';
-import { CreatePetDto } from 'src/pet/dto/pet.dto';
+import { CreatePetDto } from 'src/pet/dto/create-pet.dto';
 import { ApiBody, ApiOperation, ApiCreatedResponse, ApiOkResponse, ApiQuery } from '@nestjs/swagger';
 import { User } from 'src/user/entity/user.entity';
 import { Pet } from 'src/pet/entity/pet.entity';
