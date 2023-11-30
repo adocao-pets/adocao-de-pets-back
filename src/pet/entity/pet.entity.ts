@@ -11,6 +11,12 @@ export class Pet {
     name: string;
 
     @ApiProperty()
+    gender: string;
+
+    @ApiProperty()
+    size: string;
+
+    @ApiProperty()
     age: number;
 
     @ApiProperty()
@@ -31,16 +37,3 @@ export class Pet {
     @ApiProperty()
     userId: number;
 }
-
-
-// id            Int      @id @default(autoincrement())
-// image         String
-// name          String
-// age           Int
-// type          String
-// race          String
-// description   String
-// createdAt     DateTime @default(now())
-// updatedAt     DateTime @updatedAt @default(now())
-// user          User     @relation(fields: [userId], references: [id])
-// userId        Int

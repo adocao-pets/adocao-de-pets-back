@@ -1,11 +1,12 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Query } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserService } from './service/user.service';
 import { CreatePetDto } from 'src/pet/dto/pet.dto';
-import { ApiBody, ApiOperation, ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiCreatedResponse, ApiOkResponse, ApiQuery } from '@nestjs/swagger';
 import { User } from 'src/user/entity/user.entity';
 import { Pet } from 'src/pet/entity/pet.entity';
 import { ResponsePetDto } from 'src/pet/dto/pet.response.dto';
+import { PaginationDto } from 'src/infra/db/pagination.dto';
 
 @Controller('api/v1/user')
 export class UserController {
@@ -44,28 +45,37 @@ export class UserController {
     return this.userService.removePet(+id);
   }
 
-  @ApiOperation({ summary: 'Get all pets' })
-  @ApiBody({})
+  @ApiOperation({ summary: 'Get all pets paginated' })
   @ApiOkResponse({
-    description: 'All pets available',
-    type: ResponsePetDto,
+    description: 'Pets available paginated',
+    type: PaginationDto<ResponsePetDto>,
     isArray: true
   })
-  @Get('/pet/all')
-  getAllPets() {
-    return this.userService.getAllPets();
+  @Get('/pet')
+  @ApiQuery({ name: 'page', required: false })
+  @ApiQuery({ name: 'perPage', required: false })
+  @ApiQuery({ name: 'race', required: false })
+  @ApiQuery({ name: 'gender', required: false })
+  @ApiQuery({ name: 'size', required: false })
+  @ApiQuery({ name: 'type', required: false })
+  getAllPets(
+    @Query('page') page?: number,
+    @Query('perPage') perPage?: number,
+    @Query('race') race?: string,
+    @Query('gender') gender?: string,
+    @Query('size') size?: string,
+    @Query('type') type?: string,) {
+    return this.userService.getPets(perPage ?? 10, page ?? 1, race, gender, size, type);
   }
 
   @ApiOperation({ summary: 'Get pet' })
-  @ApiBody({ type: String })
   @ApiOkResponse({
     description: 'Pet found',
     type: ResponsePetDto
   })
+
   @Get('/pet/:id')
   getPet(@Param('id') id: string) {
     return this.userService.getPet(+id);
   }
-
-
 }
