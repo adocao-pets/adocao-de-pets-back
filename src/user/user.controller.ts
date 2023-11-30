@@ -21,6 +21,7 @@ import { User } from 'src/user/entity/user.entity';
 import { Pet } from 'src/pet/entity/pet.entity';
 import { ResponsePetDto } from 'src/pet/dto/pet.response.dto';
 import { PaginationDto } from 'src/infra/db/pagination.dto';
+import { LoginUserDto } from './dto/login-user.dto';
 
 @Controller('api/v1/user')
 export class UserController {
@@ -35,6 +36,22 @@ export class UserController {
   @Post('/create')
   create(@Body() createUserDto: CreateUserDto) {
     return this.userService.create(createUserDto);
+  }
+
+  @Get('/all')
+  getAllUsers() {
+    return this.userService.getAllUser();
+  }
+
+  @ApiOperation({ summary: 'Login user' })
+  @ApiBody({ type: LoginUserDto })
+  @ApiCreatedResponse({
+    description: 'User logged successfully',
+    type: User,
+  })
+  @Post('/login')
+  login(@Body() loginUserDto: LoginUserDto) {
+    return this.userService.login(loginUserDto);
   }
 
   @ApiOperation({ summary: 'Create pet' })

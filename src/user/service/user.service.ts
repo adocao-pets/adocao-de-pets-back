@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/infra/db/prisma.service';
 import { CreatePetDto } from 'src/pet/dto/pet.dto';
 import { CreateUserDto } from '../dto/create-user.dto';
@@ -8,6 +12,7 @@ import { ResponsePetDto } from 'src/pet/dto/pet.response.dto';
 import { PaginationDto } from 'src/infra/db/pagination.dto';
 import { createPaginator } from 'prisma-pagination';
 import { Prisma } from '@prisma/client';
+import { LoginUserDto } from '../dto/login-user.dto';
 
 @Injectable()
 export class UserService {
@@ -23,6 +28,24 @@ export class UserService {
 
     const userCreated = await this.repository.user.create({ data: user });
     return userCreated;
+  }
+
+  async login(dto: LoginUserDto): Promise<User> {
+    const user = await this.repository.user.findUnique({
+      where: {
+        email: dto.email,
+      },
+    });
+    if (!user) throw new BadRequestException('User not exists');
+
+    if (user.password !== dto.password)
+      throw new UnauthorizedException('Password Incorrect');
+
+    return user;
+  }
+
+  async getAllUser(): Promise<User[]> {
+    return await this.repository.user.findMany();
   }
 
   async registerPet(pet: CreatePetDto): Promise<Pet> {

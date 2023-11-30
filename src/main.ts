@@ -9,22 +9,22 @@ async function bootstrap() {
     new ValidationPipe({
       whitelist: true,
       forbidNonWhitelisted: true,
-      transform: true
-    })
-  )
+      transform: true,
+    }),
+  );
   app.enableCors({
-    origin: '*'
-  })
-  
+    origin: '*',
+  });
+
   const config = new DocumentBuilder()
-  .setTitle('Api pets adoption')
-  .setDescription('Pets adoption and users')
-  .setVersion('1.0')
-  .addTag('pets')
-  .build();
+    .setTitle('Api pets adoption')
+    .setDescription('Pets adoption and users')
+    .setVersion('1.0')
+    .addTag('pets')
+    .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('swagger', app, document);
 
-  await app.listen(process.env.PORT || 3000)
+  await app.listen(process.env.PORT || 3000);
 }
 bootstrap();
