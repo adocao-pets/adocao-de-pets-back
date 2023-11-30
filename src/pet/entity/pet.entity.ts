@@ -11,6 +11,12 @@ export class Pet {
     name: string;
 
     @ApiProperty()
+    gender: string;
+
+    @ApiProperty()
+    size: string;
+
+    @ApiProperty()
     age: number;
 
     @ApiProperty()

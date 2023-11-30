@@ -7,34 +7,54 @@ export enum PetType {
     DOG = 'CACHORRO'
 }
 
+export enum PetSize {
+    PEQUENO = 'PEQUENO',
+    MEDIO = 'MEDIO',
+    GRANDE = 'GRANDE'
+}
+
+export enum PetGender {
+    MACHO = 'MACHO',
+    FEMEA = 'FEMEA'
+}
+
 export class CreatePetDto {
-    constructor(image: string, name: string, age: number, type: PetType, race: string, description: string, userId: number){
+    constructor(image: string, name: string, gender: string, size: string, age: number, type: PetType, race: string, description: string, userId: number){
+        this.userId = userId;
         this.image = image || '';
         this.name = name;
+        this.gender = gender;
+        this.size = size;
         this.age = age;
         this.type = type;
         this.race = race || '';
         this.description = description;
         this.userId = userId;
     }
-    
     @ApiProperty()
     @IsOptional()
     readonly image?: string;
 
     @ApiProperty()
-    @IsOptional()
-    @IsString({ message: 'name is required' })
+    @IsString({ message: 'Nome é necessário' })
     readonly name: string;
 
+    @ApiProperty({ enum: ['MACHO', 'FEMEA']})
+    @IsString({ message: 'Gênero é necessário' })
+    @IsEnum(PetGender)
+    readonly gender: string
+
+    @ApiProperty({ enum: ['PEQUENO', 'MEDIO', 'GRANDE']})
+    @IsString({ message: 'Tamanho é necessário' })
+    @IsEnum(PetSize)
+    readonly size: string
+
     @ApiProperty()
-    @IsOptional()
-    @IsPositive({ message: 'age must be a positive number' })
+    @IsPositive({ message: 'Idade precisa ser um número positivo' })
     readonly age: number;
 
     @ApiProperty({ enum: ['CACHORRO', 'GATO']})
-    @IsOptional()
-    @IsString({ message: 'type is required, only CACHORRO or GATO' })
+    @IsString({ message: 'Tipo do pet é necessário, apenas CACHORRO ou GATO' })
     @IsEnum(PetType)
     readonly type: PetType; //CAT | DOG
 
@@ -44,10 +64,10 @@ export class CreatePetDto {
     readonly race: string;
 
     @ApiProperty()
-    @IsOptional()
-    @IsString({ message: 'description is required' })
+    @IsString({ message: 'Descriçao é necessário' })
     readonly description: string;
-    
+
+    @ApiProperty()
     @IsNumber()
     @IsOptional()
     readonly userId: number;

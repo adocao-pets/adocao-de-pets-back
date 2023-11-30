@@ -5,6 +5,9 @@ import { CreateUserDto } from '../dto/create-user.dto';
 import { User } from '../entity/user.entity';
 import { Pet } from 'src/pet/entity/pet.entity';
 import { ResponsePetDto } from 'src/pet/dto/pet.response.dto';
+import { PaginationDto } from 'src/infra/db/pagination.dto';
+import { createPaginator } from 'prisma-pagination';
+import { Prisma, pet } from '@prisma/client';
 
 @Injectable()
 export class UserService {
@@ -56,7 +59,7 @@ export class UserService {
       ...pet,
       userId: pet.userId
     } });
-    return petCreated;
+    return petCreated as Pet;
   }
 
   async updatePet(petId: number, pet: CreatePetDto): Promise<Pet> {
@@ -80,7 +83,7 @@ export class UserService {
     }
   }
 
-  async removePet(petId: number): Promise<ResponsePetDto> {
+  async removePet(petId: number) {
     try {
       const petExists = await this.repository.pet.findUnique({
         where: {
@@ -90,7 +93,7 @@ export class UserService {
       
       if (!petExists) throw new BadRequestException('Pet not found');
 
-      return  await this.repository.pet.delete({
+      await this.repository.pet.delete({
             where: {
                 id: petId
             }
@@ -100,17 +103,33 @@ export class UserService {
     }
   }
 
-  async getAllPets(): Promise<ResponsePetDto[]> {
-    return await this.repository.pet.findMany(
+  async getPets(perPage: number, page: number, raceParams: string, genderParams: string, sizeParams: string, typeParams: string): Promise<PaginationDto<ResponsePetDto>> {
+    const paginate = createPaginator({perPage: perPage});
+
+    const where = [
+      { race: {contains: raceParams} },
+      { gender: {contains: genderParams} },
+      { size: {contains: sizeParams.toUpperCase()} },
+      { type: {contains: typeParams.toUpperCase()} },
+    ]
+
+    return await paginate<Pet, Prisma.petFindManyArgs>(
+      this.repository.pet, 
       {
-        include: {
-          user: true
-        }
+        where: { AND: [
+          where[0] ? where[0] : {},
+          where[1] ? where[1] : {},
+          where[2] ? where[2] : {},
+          where[3] ? where[3] : {},
+        ]},
+      },
+      {
+        page: page,
       }
-    );
+    )
   }
 
-  async getPet(petId: number): Promise<ResponsePetDto> {
+  async getPet(petId: number): Promise<Pet> {
     const pet = await this.repository.pet.findUnique({
       where: {
         id: petId
@@ -118,7 +137,7 @@ export class UserService {
     });
 
     if (!pet) throw new BadRequestException('Pet not found');
-    return pet;
+    return pet as Pet;
   }
   
 }

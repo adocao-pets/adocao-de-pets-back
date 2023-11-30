@@ -24,6 +24,8 @@ model pet {
   id            Int      @id @default(autoincrement())
   image         String?  @default("")
   name          String
+  gender        String
+  size          String
   age           Int
   type          String
   race          String?
