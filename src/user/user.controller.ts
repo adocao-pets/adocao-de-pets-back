@@ -1,8 +1,22 @@
-import { Body, Controller, Delete, Get, Param, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserService } from './service/user.service';
 import { CreatePetDto } from 'src/pet/dto/pet.dto';
-import { ApiBody, ApiOperation, ApiCreatedResponse, ApiOkResponse, ApiQuery } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiOperation,
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiQuery,
+} from '@nestjs/swagger';
 import { User } from 'src/user/entity/user.entity';
 import { Pet } from 'src/pet/entity/pet.entity';
 import { ResponsePetDto } from 'src/pet/dto/pet.response.dto';
@@ -16,7 +30,7 @@ export class UserController {
   @ApiBody({ type: CreateUserDto })
   @ApiCreatedResponse({
     description: 'User created successfully',
-    type: User
+    type: User,
   })
   @Post('/create')
   create(@Body() createUserDto: CreateUserDto) {
@@ -27,7 +41,7 @@ export class UserController {
   @ApiBody({ type: CreatePetDto })
   @ApiCreatedResponse({
     description: 'Pet created successfully',
-    type: Pet
+    type: Pet,
   })
   @Post('/pet/register')
   registerPet(@Body() createPetDto: CreatePetDto) {
@@ -38,7 +52,7 @@ export class UserController {
   @ApiBody({ type: String })
   @ApiOkResponse({
     description: 'Pet deleted successfully',
-    type: ResponsePetDto
+    type: ResponsePetDto,
   })
   @Delete('/pet/delete/:id')
   delet(@Param('id') id: string) {
@@ -49,7 +63,7 @@ export class UserController {
   @ApiOkResponse({
     description: 'Pets available paginated',
     type: PaginationDto<ResponsePetDto>,
-    isArray: true
+    isArray: true,
   })
   @Get('/pet')
   @ApiQuery({ name: 'page', required: false })
@@ -58,22 +72,32 @@ export class UserController {
   @ApiQuery({ name: 'gender', required: false })
   @ApiQuery({ name: 'size', required: false })
   @ApiQuery({ name: 'type', required: false })
+  @ApiQuery({ name: 'name', required: false })
   getAllPets(
     @Query('page') page?: number,
     @Query('perPage') perPage?: number,
     @Query('race') race?: string,
     @Query('gender') gender?: string,
     @Query('size') size?: string,
-    @Query('type') type?: string,) {
-    return this.userService.getPets(perPage ?? 10, page ?? 1, race, gender, size, type);
+    @Query('type') type?: string,
+    @Query('name') name?: string,
+  ) {
+    return this.userService.getPets(
+      perPage ?? 10,
+      page ?? 1,
+      race,
+      gender,
+      size,
+      type,
+      name,
+    );
   }
 
   @ApiOperation({ summary: 'Get pet' })
   @ApiOkResponse({
     description: 'Pet found',
-    type: ResponsePetDto
+    type: ResponsePetDto,
   })
-
   @Get('/pet/:id')
   getPet(@Param('id') id: string) {
     return this.userService.getPet(+id);

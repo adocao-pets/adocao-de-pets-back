@@ -7,7 +7,7 @@ import { Pet } from 'src/pet/entity/pet.entity';
 import { ResponsePetDto } from 'src/pet/dto/pet.response.dto';
 import { PaginationDto } from 'src/infra/db/pagination.dto';
 import { createPaginator } from 'prisma-pagination';
-import { Prisma, pet } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class UserService {
@@ -16,9 +16,9 @@ export class UserService {
   async create(user: CreateUserDto): Promise<User> {
     const userExists = await this.repository.user.findUnique({
       where: {
-        email: user.email
-      }
-    })
+        email: user.email,
+      },
+    });
     if (userExists) throw new BadRequestException('User already exists');
 
     const userCreated = await this.repository.user.create({ data: user });
@@ -28,16 +28,18 @@ export class UserService {
   async registerPet(pet: CreatePetDto): Promise<Pet> {
     const userExists = await this.repository.user.findUnique({
       where: {
-        id: pet.userId
-      }
-    })
+        id: pet.userId,
+      },
+    });
 
     if (!userExists) throw new BadRequestException('User not found');
 
-    const petCreated = await this.repository.pet.create({ data: {
-      ...pet,
-      userId: pet.userId
-    } });
+    const petCreated = await this.repository.pet.create({
+      data: {
+        ...pet,
+        userId: pet.userId,
+      },
+    });
     return petCreated as Pet;
   }
 
@@ -45,57 +47,75 @@ export class UserService {
     try {
       const petExists = await this.repository.pet.findUnique({
         where: {
-          id: petId
-        }
-      })
-      
+          id: petId,
+        },
+      });
+
       if (!petExists) throw new BadRequestException('Pet not found');
 
       await this.repository.pet.delete({
-            where: {
-                id: petId
-            }
-        })
+        where: {
+          id: petId,
+        },
+      });
     } catch (error) {
-        throw new BadRequestException(error.message)
+      throw new BadRequestException(error.message);
     }
   }
 
-  async getPets(perPage: number, page: number, raceParams: string, genderParams: string, sizeParams: string, typeParams: string): Promise<PaginationDto<ResponsePetDto>> {
-    const paginate = createPaginator({perPage: perPage});
-
+  async getPets(
+    perPage: number,
+    page?: number,
+    raceParams?: string,
+    genderParams?: string,
+    sizeParams?: string,
+    typeParams?: string,
+    nameParams?: string,
+  ): Promise<PaginationDto<ResponsePetDto>> {
+    const paginate = createPaginator({ perPage: perPage });
     const where = [
-      { race: {contains: raceParams} },
-      { gender: {contains: genderParams} },
-      { size: {contains: sizeParams.toUpperCase()} },
-      { type: {contains: typeParams.toUpperCase()} },
-    ]
+      { race: { contains: raceParams } },
+      { gender: { contains: genderParams } },
+      { size: { contains: sizeParams?.toUpperCase() } },
+      { type: { contains: typeParams?.toUpperCase() } },
+      { name: { contains: nameParams } },
+    ];
 
+    console.log(where);
     return await paginate<Pet, Prisma.petFindManyArgs>(
-      this.repository.pet, 
+      this.repository.pet,
       {
-        where: { AND: [
-          where[0] ? where[0] : {},
-          where[1] ? where[1] : {},
-          where[2] ? where[2] : {},
-          where[3] ? where[3] : {},
-        ]},
+        where: {
+          AND: [
+            {
+              race: raceParams ? { contains: raceParams } : undefined,
+              gender: genderParams ? { contains: genderParams } : undefined,
+              size: sizeParams ? { contains: sizeParams } : undefined,
+              type: typeParams ? { contains: typeParams } : undefined,
+              name: nameParams
+                ? {
+                    contains: nameParams,
+                    mode: 'insensitive',
+                  }
+                : undefined,
+            },
+          ],
+        },
       },
       {
         page: page,
-      }
-    )
+      },
+    );
   }
 
   async getPet(petId: number): Promise<Pet> {
     const pet = await this.repository.pet.findUnique({
       where: {
-        id: petId
-      }
+        id: petId,
+      },
     });
 
     if (!pet) throw new BadRequestException('Pet not found');
     return pet as Pet;
   }
-  
 }
